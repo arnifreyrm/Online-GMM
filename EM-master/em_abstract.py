@@ -6,51 +6,70 @@ from scipy.stats import multivariate_normal, rv_discrete
 import matplotlib.pyplot as plt
 import matplotlib.mlab as mlab
 from matplotlib.ticker import MultipleLocator, FormatStrFormatter
-from gaussian import Gauss
 from sklearn.utils.extmath import logsumexp
 import scipy
 
-def positive_def(a):
-    eps = 0.01
-    w, v = np.linalg.eigh(a)
-    jordan = np.dot(np.transpose(v), a.dot(v))
-    di = np.diag_indices(jordan.shape[0])
-    jordan = np.diag(jordan[di].clip(eps))
-    return v.dot(jordan).dot(np.transpose(v))
+# def positive_def(a):
+#     eps = 0.01
+#     w, v = np.linalg.eigh(a)
+#     jordan = np.dot(np.transpose(v), a.dot(v))
+#     di = np.diag_indices(jordan.shape[0])
+#     jordan = np.diag(jordan[di].clip(eps))
+#     return v.dot(jordan).dot(np.transpose(v))
 
 
 ### This function is taken from scikit-learn GMM. ###
-def _log_multivariate_normal_density_full(X, means, covars, min_covar=1):
+# def _log_multivariate_normal_density_full(X, means, covars, min_covar=1):
+#     n_samples, n_dim = X.shape
+#     nmix = len(means)
+#     log_prob = np.empty((n_samples, nmix))
+#     chmatr = []
+#     chsol = []
+#     for c, (mu, cv) in enumerate(zip(means, covars)):
+#         try:
+#             cv_chol = scipy.linalg.cholesky(cv, lower=True)
+#         except scipy.linalg.LinAlgError:
+#             try:
+#                 cv_chol = scipy.linalg.cholesky(positive_def(cv), lower=True)
+#             except scipy.linalg.LinAlgError:
+#                 np.savetxt("errorch", cv + min_covar * np.eye(n_dim))
+#                 raise ValueError("'covars' must be symmetric, "
+#                                  "positive-definite")
+
+#         cv_log_det = 2 * np.sum(np.log(np.diagonal(cv_chol)))
+#         cv_sol = scipy.linalg.solve_triangular(cv_chol, (X - mu).T, lower=True).T
+#         chmatr.append(cv_chol)
+#         chsol.append(cv_sol)
+#         log_prob[:, c] = - 0.5 * (np.sum(cv_sol ** 2, axis=1) +
+#                                  n_dim * np.log(2 * np.pi) + cv_log_det)
+
+#     return log_prob, chmatr, chsol
+
+def _log_multivariate_normal_density_full(X, means, covars, min_covar=1e-6):
     """Log probability for full covariance matrices."""
-    # n_samples = 1 #
     n_samples, n_dim = X.shape
-    nmix = len(means)
-    log_prob = np.empty((n_samples, nmix))
-    chmatr = []
-    chsol = []
+    n_components = len(means)
+    log_prob = np.empty((n_samples, n_components))
+    
     for c, (mu, cv) in enumerate(zip(means, covars)):
         try:
             cv_chol = scipy.linalg.cholesky(cv, lower=True)
         except scipy.linalg.LinAlgError:
-            # The model is most probably stuck in a component with too
-            # few observations, we need to reinitialize this components
-            try:
-                #cv_chol = scipy.linalg.cholesky(cv + min_covar * np.eye(n_dim),
-                #                          lower=True)
-                cv_chol = scipy.linalg.cholesky(positive_def(cv), lower=True)
-            except scipy.linalg.LinAlgError:
-                np.savetxt("errorch", cv + min_covar * np.eye(n_dim))
-                raise ValueError("'covars' must be symmetric, "
-                                 "positive-definite")
-
+            # Stabilize the covariance matrix if it's not positive-definite
+            cv += min_covar * np.eye(n_dim)
+            cv_chol = scipy.linalg.cholesky(cv, lower=True)
+        
+        # Compute log determinant of covariance matrix
         cv_log_det = 2 * np.sum(np.log(np.diagonal(cv_chol)))
+        
+        # Solve for Mahalanobis distance
         cv_sol = scipy.linalg.solve_triangular(cv_chol, (X - mu).T, lower=True).T
-        chmatr.append(cv_chol)
-        chsol.append(cv_sol)
-        log_prob[:, c] = - .5 * (np.sum(cv_sol ** 2, axis=1) +
+        
+        # Compute log-probability
+        log_prob[:, c] = -0.5 * (np.sum(cv_sol ** 2, axis=1) +
                                  n_dim * np.log(2 * np.pi) + cv_log_det)
-
-    return log_prob, chmatr, chsol
+    
+    return log_prob
 
 def closest(obs, point):
     idx = (np.linalg.norm(obs - point, axis=1)).argmin()
@@ -115,11 +134,11 @@ class AbstractGMM:
         plt.close()
 
     def Estep(self, train_set):
-        lpr, chmatr, chsol = _log_multivariate_normal_density_full(train_set, self.means, self.covs,) 
+        lpr = _log_multivariate_normal_density_full(train_set, self.means, self.covs,) 
         lpr += np.log(self.w)
         logprob = logsumexp(lpr, axis=1)
         responsibilities = np.exp(lpr - logprob[:, np.newaxis])
-        return logprob, responsibilities.T, chmatr, chsol
+        return logprob, responsibilities.T
 
     def EM(self, train_set):
         pass

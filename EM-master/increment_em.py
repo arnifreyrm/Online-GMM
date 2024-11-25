@@ -1,7 +1,4 @@
 import numpy as np
-from gaussian import Gauss
-from true_params import real_params, component_number
-from sklearn.utils.extmath import logsumexp
 from em_abstract import AbstractGMM, _log_multivariate_normal_density_full, initParam
 
 class incGMM(AbstractGMM):
@@ -29,7 +26,7 @@ class incGMM(AbstractGMM):
         complete_gamma = np.zeros((self.compnum, tss))
         temp = np.zeros((self.dim, self.dim))
 
-        ll, _, _, _ = self.Estep(train_set)
+        ll, _ = self.Estep(train_set)
 
         np.random.shuffle(train_set)
         for i in range(self.compnum):
@@ -47,10 +44,10 @@ class incGMM(AbstractGMM):
                 np.random.shuffle(train_set)
             for i in range(lower, tss):
                 minibatch = train_set[[i], :]
-                logls, gamma_new, _, _ = self.Estep(minibatch)
+                logls, gamma_new = self.Estep(minibatch)
                 exnum = self.Mstep(minibatch, gamma_new, exnum, temp, i + 1)
                 complete_gamma[:, [i]] = gamma_new
 
-        ll, _, _, _  = self.Estep(train_set)
+        ll, _ = self.Estep(train_set)
         return ll.sum()
 
