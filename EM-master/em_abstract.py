@@ -71,28 +71,28 @@ def _log_multivariate_normal_density_full(X, means, covars, min_covar=1e-6):
     
     return log_prob
 
-def closest(obs, point):
-    idx = (np.linalg.norm(obs - point, axis=1)).argmin()
-    return idx, obs[idx]
+# def closest(obs, point):
+#     idx = (np.linalg.norm(obs - point, axis=1)).argmin()
+#     return idx, obs[idx]
 
-def initParam(gnum, obs):
-    dim = obs.shape[1]
-    w = np.full((gnum, ), 1 / gnum)
+# def initParam(gnum, obs):
+#     dim = obs.shape[1]
+#     w = np.full((gnum, ), 1 / gnum)
     
-    mu = np.random.multivariate_normal(obs.mean(axis=0), np.diag(obs.std(axis=0) ** 2), gnum)
-    full = list(range(obs.shape[0]))
-    idxs = []
-    for i in range(gnum):
-        idx, mu[i] = closest(obs[list(set(full) - set(idxs)), :], mu[i])
-        for i in idxs:
-            if i <= idx:
-                idx += 1
-            else:
-                break
-        bisect.insort(idxs, idx)
+#     mu = np.random.multivariate_normal(obs.mean(axis=0), np.diag(obs.std(axis=0) ** 2), gnum)
+#     full = list(range(obs.shape[0]))
+#     idxs = []
+#     for i in range(gnum):
+#         idx, mu[i] = closest(obs[list(set(full) - set(idxs)), :], mu[i])
+#         for i in idxs:
+#             if i <= idx:
+#                 idx += 1
+#             else:
+#                 break
+#         bisect.insort(idxs, idx)
 
-    cov = np.full((gnum, dim, dim), np.eye(dim, dtype = float))
-    return w, mu, cov
+#     cov = np.full((gnum, dim, dim), np.eye(dim, dtype = float))
+#     return w, mu, cov
 
 class AbstractGMM:
     def __init__(self, w, mu, cov):
@@ -108,30 +108,30 @@ class AbstractGMM:
             print(self.means[i])
             print(self.covs[i], '\n')
 
-    def draw_2dim(self, obs, path):
-        if self.dim != 2:
-            print("Error: plots only for 2-dimensional data.")
-            return
-        minorLocator = MultipleLocator(1)
-        plt.figure()
-        fig, ax = plt.subplots()
-        plt.plot(*zip(*obs), marker='o', ls='', zorder=1)
-        delta = 0.1
-        obsmax = np.amax(obs, axis=0)
-        obsmin = np.amin(obs, axis=0)
-        X, Y = np.mgrid[obsmin[0]:obsmax[0]:delta, obsmin[1]:obsmax[1]:delta] 
-        pos = np.empty(X.shape + (2,))
-        pos[:, :, 0] = X; pos[:, :, 1] = Y
-        for i in range(len(self.means)):
-            rv = multivariate_normal(self.means[i], self.covs[i])
-            plt.contour(X, Y, self.w[i] * rv.pdf(pos), zorder=2)
-            plt.scatter(self.means[i][0], self.means[i][1], color='r', s=20, zorder=2)
+    # def draw_2dim(self, obs, path):
+    #     if self.dim != 2:
+    #         print("Error: plots only for 2-dimensional data.")
+    #         return
+    #     minorLocator = MultipleLocator(1)
+    #     plt.figure()
+    #     fig, ax = plt.subplots()
+    #     plt.plot(*zip(*obs), marker='o', ls='', zorder=1)
+    #     delta = 0.1
+    #     obsmax = np.amax(obs, axis=0)
+    #     obsmin = np.amin(obs, axis=0)
+    #     X, Y = np.mgrid[obsmin[0]:obsmax[0]:delta, obsmin[1]:obsmax[1]:delta] 
+    #     pos = np.empty(X.shape + (2,))
+    #     pos[:, :, 0] = X; pos[:, :, 1] = Y
+    #     for i in range(len(self.means)):
+    #         rv = multivariate_normal(self.means[i], self.covs[i])
+    #         plt.contour(X, Y, self.w[i] * rv.pdf(pos), zorder=2)
+    #         plt.scatter(self.means[i][0], self.means[i][1], color='r', s=20, zorder=2)
         
-        ax.xaxis.set_minor_locator(minorLocator)
-        ax.yaxis.set_minor_locator(minorLocator)
-        plt.grid(which='both')
-        plt.savefig(path)
-        plt.close()
+    #     ax.xaxis.set_minor_locator(minorLocator)
+    #     ax.yaxis.set_minor_locator(minorLocator)
+    #     plt.grid(which='both')
+    #     plt.savefig(path)
+    #     plt.close()
 
     def Estep(self, train_set):
         lpr = _log_multivariate_normal_density_full(train_set, self.means, self.covs,) 
