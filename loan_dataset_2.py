@@ -142,8 +142,9 @@ yearly_means_0 = X_balanced[X_balanced['loan_status'] == 0].groupby('year')[['lo
 # Plot for loan_status=1
 plt.figure(figsize=(12, 6))
 plt.plot(yearly_means_1['loan_amnt'], label='Average Loan Amount (loan_status=1)')
-plt.plot(yearly_means_0['loan_amnt'], label='Average Interest Rate (loan_status=1)')
-plt.title('Yearly Means for loan_status=1')
+plt.plot(yearly_means_0['loan_amnt'], label='Average Loan Amount (loan_status=0)')
+# plt.title('Yearly Means for loan_status=1')
+plt.title('Yearly Means for Loan Amount')
 plt.xlabel('Year')
 plt.ylabel('Mean Value')
 plt.legend()
@@ -152,9 +153,9 @@ plt.show()
 
 # Plot for loan_status=0
 plt.figure(figsize=(12, 6))
-plt.plot( yearly_means_1['int_rate'], label='Average Loan Amount (loan_status=0)')
+plt.plot( yearly_means_1['int_rate'], label='Average Interest Rate (loan_status=1)')
 plt.plot( yearly_means_0['int_rate'], label='Average Interest Rate (loan_status=0)')
-plt.title('Yearly Means for loan_status=0')
+plt.title('Yearly Means for Interest Rate')
 plt.xlabel('Year')
 plt.ylabel('Mean Value')
 plt.legend()
