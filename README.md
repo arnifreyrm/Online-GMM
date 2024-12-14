@@ -17,7 +17,8 @@ Repo Structure:
 
 - the main folder
     - incremental_EM.ipynb: The implementation of online incremental EM with Gaussian Mixture models, with plots of running the algorithm on some basic datasets 
-    - stepwise_EM.ipynb: the Tmplmentation of online stepwise EM with Gaussian Mixture models, with plots of running the algorithm on the same basic dataset
-    - loans_drift_learn.ipynb: contains experiments and visualization code with Loan Dataset using iEM, sEM, Batch GMM, and SSU. 
-    - iem-kmeans.ipynb: Incremental EM with K-means initialization. This file also contains the graphs from running each algorithm on the 2D dataset with drifting distribution.
+    - stepwise_EM.ipynb: The Tmplmentation of online stepwise EM with Gaussian Mixture models, with plots of running the algorithm on the same basic dataset
+    - loans_drift_learn.ipynb: Contains experiments and visualization code with Loan Dataset using iEM, sEM, Batch GMM, and SSU. 
+    - iem-kmeans.ipynb: The implementation of the incremental EM model with K-means initialization. This file also contains the graphs from running each algorithm on the 2D dataset with drifting distribution.
     - balanced_loan_data: the real-world data with drifting distribution from Kaggle (name on Kaggle: Lending Club Loan Data) with complete loan data for all loans issued through the 2007-2015, including status.
+    - SSU.ipynb: The implementation of StreamSoftUpdate with its comparison to other algorihmns on the Iris dataset.
