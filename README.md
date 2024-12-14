@@ -3,7 +3,7 @@
 Authors: Abhishek, Ross, Qianfei, Arni, Moe
 
 Repo Structure:
-- notebooks_old: Contains some old notebooks throughout the implementation of our algorihms or generation of old datasets, but they are no longer used.
+- folder *notebooks_old*: Contains some old notebooks throughout the implementation of our algorihms or generation of old datasets, but they are no longer used.
 - folder *dataset*
     - 6_Gauss_Blobs.npy: contains data points from 6 Gaussian blobs.
     - dist_shift_add_gaus.npy: contains the 1D drifting dataset with 1 Gaussian distribution generating more data points at the second half of the dataset.
