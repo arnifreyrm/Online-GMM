@@ -20,3 +20,4 @@ Repo Structure:
     - stepwise_EM.ipynb: the Tmplmentation of online stepwise EM with Gaussian Mixture models, with plots of running the algorithm on the same basic dataset
     - loans_drift_learn.ipynb: contains experiments and visualization code with Loan Dataset using iEM, sEM, Batch GMM, and SSU. 
     - iem-kmeans.ipynb: Incremental EM with K-means initialization. This file also contains the graphs from running each algorithm on the 2D dataset with drifting distribution.
+    - balanced_loan_data: the real-world data with drifting distribution from Kaggle (name on Kaggle: Lending Club Loan Data) with complete loan data for all loans issued through the 2007-2015, including status.
