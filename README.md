@@ -3,8 +3,6 @@
 Authors: Abhishek, Ross, Qianfei, Arni, Moe
 
 Repo Structure:
-- folder *notebooks_old*: Contains some old notebooks throughout the implementation of our algorihms or generation of old datasets, but they are no longer used.
-  
 - folder *dataset*
     - folder *fineweb*: contains the dataset and its embedding from the fineweb.
     - 6_Gauss_Blobs.npy: contains data points from 6 Gaussian blobs.
@@ -12,6 +10,8 @@ Repo Structure:
     - dist_shift_remove_gaus.npy: contains the 1D drifting dataset but with 1 Gaussian distribution generating less data points at the second half of the dataset.
     - Gaussian_blobs_drift.npy: contains the 2D drifting dataset with each Gaussian distribution having a velocity when generating the data points (i.e., the distribution is moving when generating data points).
     - shuffled.npy: shuffled data points from a 1D Gaussian distribution.
+
+- folder *notebooks_old*: Contains some old notebooks throughout the implementation of our algorihms or generation of old datasets, but they are no longer used.
   
 - folder *functions*: contains functions to generate each dataset and to plot graphs, including the loss plot and the trace of a algorithm's outputted centers after each data point.
 
